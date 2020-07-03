@@ -11,9 +11,13 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final Authservice _auth = Authservice();
+  final _formKey = GlobalKey<FormState>();
+
   //Text field state
   String email = "";
   String password = "";
+  var error;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +39,14 @@ class _SignInState extends State<SignIn> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(
                 height: 28.0,
               ),
               TextFormField(
+                validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 },
@@ -49,6 +55,8 @@ class _SignInState extends State<SignIn> {
                 height: 28.0,
               ),
               TextFormField(
+                validator: (val) =>
+                    val.length < 6 ? 'Enter a password 6 chars long' : null,
                 obscureText: true,
                 onChanged: (val) {
                   setState(() => password = val);
@@ -58,13 +66,22 @@ class _SignInState extends State<SignIn> {
                 height: 28.0,
               ),
               RaisedButton(
-                onPressed: () async {
-                  print(email);
-                  print(password);
-                },
                 color: Colors.pink[400],
-                child: Text("Sign In"),
+                child: Text("SignIn"),
                 textColor: Colors.white,
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    dynamic result =
+                        await _auth.signInWithEmailAndPassword(email, password);
+
+                    if (result == null) {
+                      setState(() {
+                        error = "Couldn't Sign in";
+                      });
+                      print(error);
+                    }
+                  }
+                },
               )
             ],
           ),

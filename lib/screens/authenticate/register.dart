@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/screens/authenticate/authintcate.dart';
+import 'package:flutter_firebase/services/auth.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -9,9 +11,11 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  Authnticate _auth = Authnticate();
+  final Authservice _auth = Authservice();
+  final _formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
+  var error;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +37,14 @@ class _RegisterState extends State<Register> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(
                 height: 28.0,
               ),
               TextFormField(
+                validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 },
@@ -48,6 +54,8 @@ class _RegisterState extends State<Register> {
               ),
               TextFormField(
                 obscureText: true,
+                validator: (val) =>
+                    val.length < 6 ? 'Enter a password 6 chars long' : null,
                 onChanged: (val) {
                   setState(() => password = val);
                 },
@@ -57,8 +65,16 @@ class _RegisterState extends State<Register> {
               ),
               RaisedButton(
                 onPressed: () async {
-                  print(email);
-                  print(password);
+                  if (_formKey.currentState.validate()) {
+                    dynamic result = await _auth.registerWithEmailAndPassword(
+                        email, password);
+                    if (result == null) {
+                      setState(() {
+                        error = "Please put valid mail";
+                      });
+                      print(error);
+                    }
+                  }
                 },
                 color: Colors.pink[400],
                 child: Text("Register"),
