@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase/screens/authenticate/authintcate.dart';
 import 'package:flutter_firebase/services/auth.dart';
+import 'package:flutter_firebase/shared/constants.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -41,18 +40,20 @@ class _RegisterState extends State<Register> {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: 28.0,
+                height: 20.0,
               ),
               TextFormField(
+                decoration: TextInputDeccoration.copyWith(hintText: 'Email'),
                 validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 },
               ),
               SizedBox(
-                height: 28.0,
+                height: 20.0,
               ),
               TextFormField(
+                decoration: TextInputDeccoration.copyWith(hintText: 'Password'),
                 obscureText: true,
                 validator: (val) =>
                     val.length < 6 ? 'Enter a password 6 chars long' : null,
@@ -61,7 +62,7 @@ class _RegisterState extends State<Register> {
                 },
               ),
               SizedBox(
-                height: 28.0,
+                height: 20.0,
               ),
               RaisedButton(
                 onPressed: () async {
